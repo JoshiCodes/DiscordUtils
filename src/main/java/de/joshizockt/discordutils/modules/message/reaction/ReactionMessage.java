@@ -38,6 +38,7 @@ public abstract class ReactionMessage {
         getButtons().forEach((label, role) -> buttons.add(Button.primary(role, label)));
         Message msg = channel.sendMessageEmbeds(getEmbed()).addActionRow(buttons).complete();
         this.message = msg.getId();
+        sent = true;
         cacheMessage();
         return true;
     }
