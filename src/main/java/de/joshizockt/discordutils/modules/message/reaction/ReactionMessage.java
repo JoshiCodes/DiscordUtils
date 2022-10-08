@@ -104,6 +104,7 @@ public abstract class ReactionMessage {
             return this;
         }
 
+
         /**
          * Returns a ReactionMessage with the specified Options.
          * If the Message is already sent, it will not be sent again.
@@ -112,6 +113,18 @@ public abstract class ReactionMessage {
          * @return The ReactionMessage
          */
         public ReactionMessage detect(TextChannel channel) {
+            return detect(channel, true);
+        }
+
+        /**
+         * Returns a ReactionMessage with the specified Options.
+         * If the Message is already sent, it will not be sent again.
+         * If the Message is not sent, {@link #build()} will be returned and {@link ReactionMessage#send(TextChannel)} will be called.
+         * @param channel The Channel where the Message should be sent.
+         * @param sendMessage If the Message is not sent, it will be sent.
+         * @return The ReactionMessage
+         */
+        public ReactionMessage detect(TextChannel channel, boolean sendMessage) {
 
             for(Message msg : channel.getIterableHistory()) {
                 if(msg.getEmbeds().size() < 1) continue;
@@ -140,7 +153,7 @@ public abstract class ReactionMessage {
                 }
             }
             ReactionMessage msg = build();
-            msg.send(channel);
+            if(sendMessage) msg.send(channel);
             return msg;
         }
 
