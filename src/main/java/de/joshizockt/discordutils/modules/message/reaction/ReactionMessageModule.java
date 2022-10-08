@@ -55,14 +55,35 @@ public class ReactionMessageModule extends ListenerAdapter implements Module {
                 return;
             }
             InteractionHook hook = event.deferReply(true).complete();
+            ReactionMessage message = getMessage(event.getMessageId());
+            if(message == null) {
+                hook.editOriginal("The message was not found").queue();
+                return;
+            }
             if(m.getRoles().contains(role)) {
                 event.getGuild().removeRoleFromMember(m, role).queue();
                 hook.editOriginal("**[-]** " + role.getName()).queue();
             } else {
+                if(message.getType() == ReactionMessage.ReactionType.SINGLE) {
+                    m.getRoles().forEach(r -> {
+                        if(message.getButtons().containsValue(r.getId())) {
+                            event.getGuild().removeRoleFromMember(m, r).queue();
+                        }
+                    });
+                }
                 event.getGuild().addRoleToMember(m, role).queue();
                 hook.editOriginal("**[+]** " + role.getName()).queue();
             }
         }
+    }
+
+    private ReactionMessage getMessage(String messageId) {
+        for(ReactionMessage message : cache) {
+            if(message.getMessageId().equals(messageId)) {
+                return message;
+            }
+        }
+        return null;
     }
 
 }
