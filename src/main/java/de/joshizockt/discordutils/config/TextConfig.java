@@ -1,12 +1,7 @@
 package de.joshizockt.discordutils.config;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class TextConfig extends FileConfig {
