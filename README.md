@@ -1,4 +1,5 @@
 # DiscordUtils
+<a alt="Version:"><img src="https://img.shields.io/github/v/release/JoshiCodes/RedditAPI"></a><br>
 Discord JDA Utilities
 
 Some simple Utils for JDA Bots
