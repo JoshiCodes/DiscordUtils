@@ -21,7 +21,7 @@ public abstract class ReactionMessage {
 
     //         BUTTON LABEL , ROLE
     abstract HashMap<String, String> getButtons();
-    abstract ReactionType getType();
+    abstract Type getType();
 
     public String getMessageId() {
         return message;
@@ -61,7 +61,7 @@ public abstract class ReactionMessage {
         ReactionMessageModule.cacheMessage(this);
     }
 
-    public static enum ReactionType {
+    public static enum Type {
 
         MULTIPLE, SINGLE
 
@@ -72,7 +72,7 @@ public abstract class ReactionMessage {
         private MessageEmbed embed;
 
         private HashMap<String, String> buttons;
-        private ReactionType type = ReactionType.MULTIPLE;
+        private Type type = Type.MULTIPLE;
 
         public Builder setEmbed(MessageEmbed embed) {
             this.embed = embed;
@@ -100,7 +100,7 @@ public abstract class ReactionMessage {
             return this;
         }
 
-        public Builder setType(ReactionType type) {
+        public Builder setType(Type type) {
             this.type = type;
             return this;
         }
@@ -143,7 +143,7 @@ public abstract class ReactionMessage {
                         }
 
                         @Override
-                        ReactionType getType() {
+                        Type getType() {
                             return type;
                         }
                     };
@@ -175,7 +175,7 @@ public abstract class ReactionMessage {
                 }
 
                 @Override
-                ReactionType getType() {
+                Type getType() {
                     return type;
                 }
             };

@@ -64,7 +64,7 @@ public class ReactionMessageModule extends ListenerAdapter implements Module {
                 event.getGuild().removeRoleFromMember(m, role).queue();
                 hook.editOriginal("**[-]** " + role.getName()).queue();
             } else {
-                if(message.getType() == ReactionMessage.ReactionType.SINGLE) {
+                if(message.getType() == ReactionMessage.Type.SINGLE) {
                     m.getRoles().forEach(r -> {
                         if(message.getButtons().containsValue(r.getId())) {
                             event.getGuild().removeRoleFromMember(m, r).queue();
