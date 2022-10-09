@@ -18,7 +18,7 @@ To install the utils as dependency in maven, you can use the following in your p
     <version>VERSION HERE</version>
 </dependency>
 ```
-**Tip:** *Replace the `VERSION HERE` with the current Version.*
+**Tip:** *Replace the `VERSION HERE` with the current release.*
 
 
 ## Usage
