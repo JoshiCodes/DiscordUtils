@@ -64,6 +64,12 @@ config.json in the resources:
   "asdf": "qwer"
 }
 ```
+config.json (output):
+```json
+{
+  "asdf": "zxcv"
+}
+```
 
 
 
