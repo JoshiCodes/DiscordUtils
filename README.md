@@ -47,7 +47,7 @@ For example:
 ```
 // Create new Config
 JsonConfig config = new JsonConfig(new File("config.json"));
-// Copy Template if File is not exists
+// Copy Template if File does not exists
 config.copyDefaults();
 
 // Get an already existing value
