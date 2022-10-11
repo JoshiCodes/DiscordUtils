@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -25,6 +26,11 @@ public class ReactionMessageModule extends ListenerAdapter implements Module {
 
     @Override
     public void init(JDABuilder builder) {
+        builder.addEventListeners(this);
+    }
+
+    @Override
+    public void init(DefaultShardManagerBuilder builder) {
         builder.addEventListeners(this);
     }
 

@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class ReactionMessage {
 
@@ -130,7 +131,7 @@ public abstract class ReactionMessage {
             for(Message msg : channel.getIterableHistory()) {
                 if(msg.getEmbeds().size() < 1) continue;
                 if(msg.getEmbeds().get(0).getTitle() == null) continue;
-                if(msg.getEmbeds().get(0).getTitle().equals(embed.getTitle())) {
+                if(Objects.equals(msg.getEmbeds().get(0).getTitle(), embed.getTitle())) {
                     ReactionMessage message = new ReactionMessage() {
                         @Override
                         MessageEmbed getEmbed() {
