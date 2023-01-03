@@ -21,6 +21,16 @@ To install the utils as dependency in maven, you can use the following in your p
 **Tip:** *Replace the `VERSION HERE` with the current release.*
 
 
+**If this does not work, try using my repo:**
+```xml
+<repository>
+  <id>joshizockt-de-releases</id>
+  <name>JoshiZockt.de Repository</name>
+  <url>https://repo.joshizockt.de/releases</url>
+</repository>
+```
+
+
 ## Usage
 There are different Things to use this library. Most of them require to enable the corresponding Module.
 You can do this with
