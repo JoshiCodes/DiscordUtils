@@ -18,6 +18,4 @@ public class CommandModule extends ListenerAdapter implements Module {
         builder.addEventListeners(this);
     }
 
-
-
 }
