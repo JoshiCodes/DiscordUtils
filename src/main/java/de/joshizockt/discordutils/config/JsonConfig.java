@@ -48,6 +48,7 @@ public class JsonConfig extends FileConfig {
         if(object == null) updateData();
         if(object == null) object = new JSONObject();
         object.put(key, o);
+        //TODO: Add support for multiple keys ("test.test2")
     }
 
     @Override
@@ -58,7 +59,7 @@ public class JsonConfig extends FileConfig {
             for(int i = 0; i < (args.length-1); i++) {
                 String arg = args[i];
                 if(data.keySet().contains(arg)) {
-                    Object o = object.get(arg);
+                    Object o = data.get(arg);
                     if(o == null) continue;
                     if(o instanceof JSONObject object) {
                         data = object;
