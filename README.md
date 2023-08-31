@@ -13,7 +13,7 @@ To install the utils as dependency in maven, you can use the following in your p
 
 ```xml
 <dependency>
-    <groupId>de.joshizockt</groupId>
+    <groupId>de.joshicodes</groupId>
     <artifactId>discordutils</artifactId>
     <version>VERSION HERE</version>
 </dependency>
@@ -24,9 +24,9 @@ To install the utils as dependency in maven, you can use the following in your p
 **If this does not work, try using my repo:**
 ```xml
 <repository>
-  <id>joshizockt-de-releases</id>
-  <name>JoshiZockt.de Repository</name>
-  <url>https://repo.joshizockt.de/releases</url>
+  <id>joshicodes-de-releases</id>
+  <name>JoshiCodes.de Repository</name>
+  <url>https://repo.joshicodes.de/releases</url>
 </repository>
 ```
 

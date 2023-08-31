@@ -6,12 +6,12 @@
 
     <distributionManagement>
         <repository>
-            <id>joshizockt-de</id>
-            <url>https://repo.joshizockt.de/releases</url>
+            <id>joshicodes-de</id>
+            <url>https://repo.joshicodes.de/releases</url>
         </repository>
     </distributionManagement>
 
-    <groupId>de.joshizockt</groupId>
+    <groupId>de.joshicodes</groupId>
     <artifactId>discordutils</artifactId>
     <version>1.1.5</version>
 
