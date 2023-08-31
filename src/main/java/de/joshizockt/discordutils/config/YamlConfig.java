@@ -57,7 +57,22 @@ public class YamlConfig extends FileConfig  {
     @Override
     public void set(String key, Object o) {
         if(data == null) data = new HashMap<>();
-        data.put(key, o);
+        String[] args = key.split("\\.");
+        Map<String, Object> map = data;
+        for(int i = 0; i < (args.length-1); i++) {
+            String arg = args[i];
+            if(map.containsKey(arg)) {
+                Object o1 = map.get(arg);
+                if(o1 == null) {
+                    map.put(arg, new HashMap<>());
+                } else if(o1 instanceof LinkedHashMap linkedHashMap) {
+                    map = linkedHashMap;
+                }
+            } else {
+                map.put(arg, new HashMap<>());
+                map = (Map<String, Object>) map.get(arg);
+            }
+        }
     }
 
     @Override
