@@ -67,12 +67,18 @@ public class YamlConfig extends FileConfig  {
                     map.put(arg, new HashMap<>());
                 } else if(o1 instanceof LinkedHashMap linkedHashMap) {
                     map = linkedHashMap;
+                } else {
+                    map.put(arg, new HashMap<>());
+                    map = (Map<String, Object>) map.get(arg);
                 }
             } else {
                 map.put(arg, new HashMap<>());
                 map = (Map<String, Object>) map.get(arg);
             }
         }
+        String arg = args[args.length-1];
+        if(o == null) map.remove(arg);
+        else map.put(arg, o);
     }
 
     @Override
