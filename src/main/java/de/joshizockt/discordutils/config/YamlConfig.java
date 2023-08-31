@@ -50,6 +50,10 @@ public class YamlConfig extends FileConfig  {
         return (List<LinkedHashMap<String, String>>) get(key);
     }
 
+    public List<String> getStringList(String key) {
+        return (List<String>) get(key);
+    }
+
     @Override
     public void set(String key, Object o) {
         if(data == null) data = new HashMap<>();

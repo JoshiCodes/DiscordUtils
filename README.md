@@ -1,5 +1,7 @@
 # DiscordUtils
 <a alt="Version:"><img src="https://img.shields.io/github/v/release/JoshiCodes/DiscordUtils"></a><br>
+<img src="https://repo.joshicodes.de/api/badge/latest/releases/de/joshicodes/discordutils?prefix=v">
+
 Discord JDA Utilities
 
 Some simple Utils for JDA Bots
@@ -18,7 +20,7 @@ To install the utils as dependency in maven, you can use the following in your p
     <version>VERSION HERE</version>
 </dependency>
 ```
-**Tip:** *Replace the `VERSION HERE` with the current release.*
+**Tip:** *Replace the `VERSION HERE` with the current release (``release`` or ``joshicodes-de``).*
 
 
 **If this does not work, try using my repo:**
