@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Set;
 
 public abstract class FileConfig {
 
@@ -39,6 +39,15 @@ public abstract class FileConfig {
     abstract public Object get(String key);
 
     abstract public HashMap<String, Object> getData();
+
+    /**
+     * Retrieves all keys from the Config.
+     * This only returns the keys of the first level.
+     * @return the first level keys of the Config
+     */
+    public Set<String> getKeys() {
+        return getData().keySet();
+    }
 
     /**
      * Get an Object with any class from the Config. Returns the def variable if nothing is found.

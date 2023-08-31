@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class YamlConfig extends FileConfig  {
@@ -42,6 +43,11 @@ public class YamlConfig extends FileConfig  {
     @Override
     public HashMap<String, Object> getData() {
         return new HashMap<>(data);
+    }
+
+
+    public List<LinkedHashMap<String, String>> getMapList(String key) {
+        return (List<LinkedHashMap<String, String>>) get(key);
     }
 
     @Override
