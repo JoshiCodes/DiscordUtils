@@ -5,8 +5,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +38,17 @@ public abstract class ReactionMessage {
         if(sent) return false;
         List<Button> buttons = new ArrayList<>();
         getButtons().forEach((label, role) -> buttons.add(Button.primary(role, label)));
-        Message msg = channel.sendMessageEmbeds(getEmbed()).addActionRow(buttons).complete();
+        MessageCreateAction action = channel.sendMessageEmbeds(getEmbed());
+        if(getType() == Type.SINGLE || getType() == Type.MULTIPLE) {
+            action.setActionRow(buttons);
+        } else if(getType() == Type.SELECT) {
+            StringSelectMenu.Builder select = StringSelectMenu.create("sr_select");
+            getButtons().forEach(select::addOption);
+            action.setActionRow(
+                    select.build()
+            );
+        }
+        Message msg = action.complete();
         this.message = msg.getId();
         sent = true;
         cacheMessage();
@@ -64,7 +75,8 @@ public abstract class ReactionMessage {
 
     public static enum Type {
 
-        MULTIPLE, SINGLE
+        MULTIPLE, SINGLE,
+        SELECT
 
     }
 
@@ -85,7 +97,28 @@ public abstract class ReactionMessage {
             return this;
         }
 
+        /**
+         * Adds a Button to the Message.
+         * @deprecated With the Change to different Selection-Types ({@link Type}),
+         *             this method is deprecated and will be removed in the next major version.
+         *             Use {@link #addOption(String, String)} instead.
+         * @param label The label of the Button
+         * @param roleId The ID of the Role
+         * @return This Builder Instance
+         */
+        @Deprecated(forRemoval = true, since = "1.1.5d")
         public Builder addButton(String label, String roleId) {
+            return addOption(label, roleId);
+        }
+
+        /**
+         * Adds an Option to the Message.
+         * The Options will be displayed as Buttons or in a Selection, based on the selected Type.
+         * @param label The label of the Option
+         * @param roleId The ID of the Role
+         * @return This Builder Instance
+         */
+        public Builder addOption(String label, String roleId) {
             if(buttons == null) {
                 buttons = new HashMap<>();
             }
@@ -93,7 +126,28 @@ public abstract class ReactionMessage {
             return this;
         }
 
+        /**
+         * Adds a Button to the Message.
+         * @deprecated With the Change to different Selection-Types ({@link Type}),
+         *             this method is deprecated and will be removed in the next major version.
+         *             Use {@link #addOption(String, Role)} instead.
+         * @param label The label of the Button
+         * @param role The Role
+         * @return This Builder Instance
+         */
+        @Deprecated(forRemoval = true, since = "1.1.5d")
         public Builder addButton(String label, Role role) {
+            return addOption(label, role);
+        }
+
+        /**
+         * Adds an Option to the Message.
+         * The Options will be displayed as Buttons or in a Selection, based on the selected Type.
+         * @param label The label of the Option
+         * @param role The Role
+         * @return This Builder Instance
+         */
+        public Builder addOption(String label, Role role) {
             if(buttons == null) {
                 buttons = new HashMap<>();
             }
@@ -161,7 +215,7 @@ public abstract class ReactionMessage {
 
         /**
          * Builds a new ReactionMessage
-         * @return
+         * @return The ReactionMessage
          */
         public ReactionMessage build() {
             return new ReactionMessage() {

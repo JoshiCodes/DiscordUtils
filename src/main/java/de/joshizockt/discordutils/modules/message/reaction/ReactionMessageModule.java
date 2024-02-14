@@ -3,18 +3,22 @@ package de.joshizockt.discordutils.modules.message.reaction;
 import de.joshizockt.discordutils.Validate;
 import de.joshizockt.discordutils.modules.Module;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectInteraction;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +44,57 @@ public class ReactionMessageModule extends ListenerAdapter implements Module {
 
     public static List<ReactionMessage> getCache() {
         return cache;
+    }
+
+    @Override
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+        StringSelectInteraction interaction = event.getInteraction();
+        User u = event.getUser();
+        Member m = event.getMember();
+        if(m == null) {
+            return;
+        }
+        if(u.isBot()) return;
+        String id = interaction.getComponentId();
+        if(!id.equals("sr_select")) {
+            return;
+        }
+        List<String> values = interaction.getValues();
+        values.removeIf(v -> !Validate.isLong(v));
+        if(values.isEmpty()) {
+            return;
+        }
+        InteractionHook hook = event.deferReply(true).complete();
+        ReactionMessage message = getMessage(event.getMessageId());
+        if(message == null) {
+            hook.editOriginal("The message was not found").queue();
+            return;
+        }
+        if(message.getType() != ReactionMessage.Type.SELECT) return;
+        StringBuilder sb = new StringBuilder();
+        Guild guild = event.getGuild();
+        if(guild == null) {
+            return;
+        }
+        for(String value : values) {
+            Role role = guild.getRoleById(value);
+            if(role == null) {
+                continue;
+            }
+            if(m.getRoles().contains(role)) {
+                event.getGuild().removeRoleFromMember(m, role).queue();
+                sb.append("**[-]** ").append(role.getName()).append("\n");
+            } else {
+                m.getRoles().forEach(r -> {
+                    if(message.getButtons().containsValue(r.getId())) {
+                        event.getGuild().removeRoleFromMember(m, r).queue();
+                    }
+                });
+                event.getGuild().addRoleToMember(m, role).queue();
+                sb.append("**[+]** ").append(role.getName()).append("\n");
+            }
+        }
+        hook.editOriginal(sb.toString()).queue();
     }
 
     @Override
