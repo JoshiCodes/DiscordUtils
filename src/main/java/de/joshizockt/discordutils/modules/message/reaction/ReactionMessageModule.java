@@ -70,7 +70,9 @@ public class ReactionMessageModule extends ListenerAdapter implements Module {
             hook.editOriginal("The message was not found").queue();
             return;
         }
-        if(message.getType() != ReactionMessage.Type.SELECT) return;
+        if(message.getType() != ReactionMessage.Type.SELECT_SINGLE && message.getType() != ReactionMessage.Type.SELECT_MULTIPLE) {
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         Guild guild = event.getGuild();
         if(guild == null) {
