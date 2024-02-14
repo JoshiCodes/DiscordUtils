@@ -43,6 +43,9 @@ ModuleLoader.loadModules(JDABuilder, Module, @Nullable Module...)
 ### Configuration
 One of the most important Features, are the Configurations. These do not require a Module and could be used Stand-alone.
 There are a few different sort of Configurations, which are all listed below:
+<br>
+**Note:** There are far better implementations for Configuration Files. This implementation is old and only used for simple Configurations.
+Personally, I would recommend using [boosted-yaml](https://github.com/dejvokep/boosted-yaml).
 ```
     - JsonConfig
     - YamlConfig
@@ -97,9 +100,11 @@ ModuleLoader.loadModules(builder, new ReactionMessageModule());
 You then can create a new ReactionMessage with the ReactionMessage.Builder.
 With this Builder you can define the message and add the Role Buttons.
 To change the message use `ReactionMessage.Builder#setEmbed`.
-You then can add new Roles using `ReactionMessage.Builder#addButton(String label, String roleId)`
+You then can add new Roles using `ReactionMessage.Builder#addOption(String label, String roleId)`
 If you want, you can change the Type from MULTIPLE to SINGE, wich allows the user to only have one Role per message.
 You can do that using `ReactionMessage.Builder#setType(ReactionMessage.Type)`.
+There is also the option to use a SelectMenu instead of Buttons. To do that, just set the Type to `ReactionMessage.Type.SELECT`.
+
 
 For example:
 ````
@@ -116,8 +121,8 @@ builder.setEmbed(embedBuilder); // You could also use #setMessage(MessageEmbed)
 builder.setType(ReactionMessage.Type.SINGLE); // Default is MULTIPLE, so no need to change it if you want to use MULTIPLE
 
 // Add buttons
-builder.addButton("Role 1", "1234567890");
-builder.addButton("Role 2", "0987654321");
+builder.addOption("Role 1", "1234567890");
+builder.addOption("Role 2", "0987654321");
 ````
 
 You then can build the ReactionMessage with `ReactionMessage.Builder#build()`. This will return a new ReactionMessage Element.
