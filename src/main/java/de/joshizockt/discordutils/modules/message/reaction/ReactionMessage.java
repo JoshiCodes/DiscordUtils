@@ -63,9 +63,17 @@ public abstract class ReactionMessage {
     public void refresh(TextChannel channel) {
         Message msg = channel.retrieveMessageById(getMessageId()).complete();
         if(msg == null) return;
-        List<Button> buttons = new ArrayList<>();
-        getButtons().forEach((label, role) -> buttons.add(Button.primary("sr_" + role, label)));
-        msg.editMessageEmbeds(getEmbed()).setActionRow(buttons).queue();
+        if(getType() == Type.SINGLE || getType() == Type.MULTIPLE) {
+            List<Button> buttons = new ArrayList<>();
+            getButtons().forEach((label, role) -> buttons.add(Button.primary("sr_" + role, label)));
+            msg.editMessageEmbeds(getEmbed()).setActionRow(buttons).queue();
+        } else if(getType() == Type.SELECT) {
+            StringSelectMenu.Builder select = StringSelectMenu.create("sr_select");
+            getButtons().forEach(select::addOption);
+            msg.editMessageEmbeds(getEmbed()).setActionRow(
+                    select.build()
+            ).queue();
+        }
         cacheMessage();
     }
 
@@ -183,7 +191,7 @@ public abstract class ReactionMessage {
         public ReactionMessage detect(TextChannel channel, boolean sendMessage) {
 
             for(Message msg : channel.getIterableHistory()) {
-                if(msg.getEmbeds().size() < 1) continue;
+                if(msg.getEmbeds().isEmpty()) continue;
                 if(msg.getEmbeds().get(0).getTitle() == null) continue;
                 if(Objects.equals(msg.getEmbeds().get(0).getTitle(), embed.getTitle())) {
                     ReactionMessage message = new ReactionMessage() {
