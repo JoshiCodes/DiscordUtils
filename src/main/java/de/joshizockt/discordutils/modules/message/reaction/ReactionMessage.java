@@ -19,6 +19,7 @@ public abstract class ReactionMessage {
     private String message;
     private boolean sent = false;
 
+
     abstract MessageEmbed getEmbed();
 
     //         BUTTON LABEL , ROLE
@@ -41,8 +42,9 @@ public abstract class ReactionMessage {
         MessageCreateAction action = channel.sendMessageEmbeds(getEmbed());
         if(getType() == Type.SINGLE || getType() == Type.MULTIPLE) {
             action.setActionRow(buttons);
-        } else if(getType() == Type.SELECT) {
+        } else if(getType() == Type.SELECT_MULTIPLE || getType() == Type.SELECT_SINGLE) {
             StringSelectMenu.Builder select = StringSelectMenu.create("sr_select");
+            select.setMaxValues(getType() == Type.SELECT_MULTIPLE ? getButtons().size() : 1);
             getButtons().forEach(select::addOption);
             action.setActionRow(
                     select.build()
@@ -67,8 +69,9 @@ public abstract class ReactionMessage {
             List<Button> buttons = new ArrayList<>();
             getButtons().forEach((label, role) -> buttons.add(Button.primary("sr_" + role, label)));
             msg.editMessageEmbeds(getEmbed()).setActionRow(buttons).queue();
-        } else if(getType() == Type.SELECT) {
+        } else if(getType() == Type.SELECT_MULTIPLE || getType() == Type.SELECT_SINGLE) {
             StringSelectMenu.Builder select = StringSelectMenu.create("sr_select");
+            select.setMaxValues(getType() == Type.SELECT_MULTIPLE ? getButtons().size() : 1);
             getButtons().forEach(select::addOption);
             msg.editMessageEmbeds(getEmbed()).setActionRow(
                     select.build()
@@ -84,7 +87,7 @@ public abstract class ReactionMessage {
     public static enum Type {
 
         MULTIPLE, SINGLE,
-        SELECT
+        SELECT_MULTIPLE, SELECT_SINGLE
 
     }
 

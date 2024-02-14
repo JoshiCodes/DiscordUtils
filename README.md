@@ -103,7 +103,7 @@ To change the message use `ReactionMessage.Builder#setEmbed`.
 You then can add new Roles using `ReactionMessage.Builder#addOption(String label, String roleId)`
 If you want, you can change the Type from MULTIPLE to SINGE, wich allows the user to only have one Role per message.
 You can do that using `ReactionMessage.Builder#setType(ReactionMessage.Type)`.
-There is also the option to use a SelectMenu instead of Buttons. To do that, just set the Type to `ReactionMessage.Type.SELECT`.
+There is also the option to use a SelectMenu instead of Buttons. To do that, just set the Type to `ReactionMessage.Type.SELECT_MUTLIPLE` or `ReactionMessage.Type.SELECT_SINGLE`.
 
 
 For example:
