@@ -59,7 +59,7 @@ public class ReactionMessageModule extends ListenerAdapter implements Module {
         if(!id.equals("sr_select")) {
             return;
         }
-        List<String> values = interaction.getValues();
+        List<String> values = new ArrayList<>(interaction.getValues());
         values.removeIf(v -> !Validate.isLong(v));
         if(values.isEmpty()) {
             return;
