@@ -129,7 +129,7 @@ public class ReactionMessageModule extends ListenerAdapter implements Module {
             } else {
                 if(message.getType() == ReactionMessage.Type.SINGLE) {
                     m.getRoles().forEach(r -> {
-                        if(message.getButtons().containsValue(r.getId())) {
+                        if(message.getButtons().values().stream().anyMatch(pair -> pair.getLeft().equals(r.getId()))) {
                             event.getGuild().removeRoleFromMember(m, r).queue();
                         }
                     });

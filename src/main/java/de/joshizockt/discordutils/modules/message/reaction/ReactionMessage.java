@@ -30,6 +30,19 @@ public abstract class ReactionMessage {
         return message;
     }
 
+    public TreeMap<ButtonStyle, TreeMap<String, Pair<String, ButtonStyle>>> sortedOptions() {
+        TreeMap<ButtonStyle, TreeMap<String, Pair<String, ButtonStyle>>> sorted = new TreeMap<>();
+        for(String key : getButtons().keySet()) {
+            Pair<String, ButtonStyle> pair = getButtons().get(key);
+            ButtonStyle style = pair.getRight();
+            if(!sorted.containsKey(style)) {
+                sorted.put(style, new TreeMap<>());
+            }
+            sorted.get(style).put(key, pair);
+        }
+        return sorted;
+    }
+
     /**
      * Sends the message and creates the buttons for the roles
      * @param channel The channel where the message should be sent
@@ -38,18 +51,18 @@ public abstract class ReactionMessage {
     public boolean send(TextChannel channel) {
         if(sent) return false;
         List<Button> buttons = new ArrayList<>();
-        getButtons().forEach((label, pair) -> buttons.add(Button.of(pair.getRight(), "sr_" + pair.getLeft(), label)));
+        sortedOptions().forEach((type, map) -> {
+            map.forEach(
+                    (label, pair) -> buttons.add(Button.of(pair.getRight(), "sr_" + pair.getLeft(), label))
+            );
+        });
         MessageCreateAction action = channel.sendMessageEmbeds(getEmbed());
         if(getType() == Type.SINGLE || getType() == Type.MULTIPLE) {
             List<ActionRow> rows = new ArrayList<>();
             // 5 Buttons per Row
             for(int i = 0; i < buttons.size(); i += 5) {
-                List<Button> row = new ArrayList<>();
-                for(int j = i; j < i + 5; j++) {
-                    if(j >= buttons.size()) break;
-                    row.add(buttons.get(j));
-                }
-                rows.add(ActionRow.of(row));
+                List<Button> subList = buttons.subList(i, Math.min(i + 5, buttons.size()));
+                rows.add(ActionRow.of(subList));
             }
             action.setComponents(rows);
         } else if(getType() == Type.SELECT_MULTIPLE || getType() == Type.SELECT_SINGLE) {
@@ -77,16 +90,16 @@ public abstract class ReactionMessage {
         if(msg == null) return;
         if(getType() == Type.SINGLE || getType() == Type.MULTIPLE) {
             List<Button> buttons = new ArrayList<>();
-            getButtons().forEach((label, pair) -> buttons.add(Button.of(pair.getRight(), "sr_" + pair.getLeft(), label)));
+            sortedOptions().forEach((type, map) -> {
+                map.forEach(
+                        (label, pair) -> buttons.add(Button.of(pair.getRight(), "sr_" + pair.getLeft(), label))
+                );
+            });
             List<ActionRow> rows = new ArrayList<>();
-            // 5 Buttons per Row
+            // 5 Buttons per Row, sorted by the button types
             for(int i = 0; i < buttons.size(); i += 5) {
-                List<Button> row = new ArrayList<>();
-                for(int j = i; j < i + 5; j++) {
-                    if(j >= buttons.size()) break;
-                    row.add(buttons.get(j));
-                }
-                rows.add(ActionRow.of(row));
+                List<Button> subList = buttons.subList(i, Math.min(i + 5, buttons.size()));
+                rows.add(ActionRow.of(subList));
             }
             msg.editMessageEmbeds(getEmbed()).setComponents(rows).queue();
         } else if(getType() == Type.SELECT_MULTIPLE || getType() == Type.SELECT_SINGLE) {
