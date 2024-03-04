@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
@@ -41,7 +42,17 @@ public abstract class ReactionMessage {
         getButtons().forEach((label, role) -> buttons.add(Button.primary(role, label)));
         MessageCreateAction action = channel.sendMessageEmbeds(getEmbed());
         if(getType() == Type.SINGLE || getType() == Type.MULTIPLE) {
-            action.setActionRow(buttons);
+            List<ActionRow> rows = new ArrayList<>();
+            // 5 Buttons per Row
+            for(int i = 0; i < buttons.size(); i += 5) {
+                List<Button> row = new ArrayList<>();
+                for(int j = i; j < i + 5; j++) {
+                    if(j >= buttons.size()) break;
+                    row.add(buttons.get(j));
+                }
+                rows.add(ActionRow.of(row));
+            }
+            action.setComponents(rows);
         } else if(getType() == Type.SELECT_MULTIPLE || getType() == Type.SELECT_SINGLE) {
             StringSelectMenu.Builder select = StringSelectMenu.create("sr_select");
             select.setMaxValues(getType() == Type.SELECT_MULTIPLE ? getButtons().size() : 1);
