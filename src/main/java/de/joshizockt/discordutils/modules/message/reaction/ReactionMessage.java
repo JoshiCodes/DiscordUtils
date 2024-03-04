@@ -7,13 +7,12 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.internal.utils.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class ReactionMessage {
 
@@ -24,7 +23,7 @@ public abstract class ReactionMessage {
     abstract MessageEmbed getEmbed();
 
     //         BUTTON LABEL , ROLE
-    abstract HashMap<String, String> getButtons();
+    abstract TreeMap<String, Pair<String, ButtonStyle>> getButtons();
     abstract Type getType();
 
     public String getMessageId() {
@@ -39,7 +38,7 @@ public abstract class ReactionMessage {
     public boolean send(TextChannel channel) {
         if(sent) return false;
         List<Button> buttons = new ArrayList<>();
-        getButtons().forEach((label, role) -> buttons.add(Button.primary(role, label)));
+        getButtons().forEach((label, pair) -> buttons.add(Button.of(pair.getRight(), "sr_" + pair.getLeft(), label)));
         MessageCreateAction action = channel.sendMessageEmbeds(getEmbed());
         if(getType() == Type.SINGLE || getType() == Type.MULTIPLE) {
             List<ActionRow> rows = new ArrayList<>();
@@ -56,7 +55,7 @@ public abstract class ReactionMessage {
         } else if(getType() == Type.SELECT_MULTIPLE || getType() == Type.SELECT_SINGLE) {
             StringSelectMenu.Builder select = StringSelectMenu.create("sr_select");
             select.setMaxValues(getType() == Type.SELECT_MULTIPLE ? getButtons().size() : 1);
-            getButtons().forEach(select::addOption);
+            getButtons().forEach((label, pair) -> select.addOption(label, pair.getLeft())); // no style needed
             action.setActionRow(
                     select.build()
             );
@@ -78,12 +77,22 @@ public abstract class ReactionMessage {
         if(msg == null) return;
         if(getType() == Type.SINGLE || getType() == Type.MULTIPLE) {
             List<Button> buttons = new ArrayList<>();
-            getButtons().forEach((label, role) -> buttons.add(Button.primary("sr_" + role, label)));
-            msg.editMessageEmbeds(getEmbed()).setActionRow(buttons).queue();
+            getButtons().forEach((label, pair) -> buttons.add(Button.of(pair.getRight(), "sr_" + pair.getLeft(), label)));
+            List<ActionRow> rows = new ArrayList<>();
+            // 5 Buttons per Row
+            for(int i = 0; i < buttons.size(); i += 5) {
+                List<Button> row = new ArrayList<>();
+                for(int j = i; j < i + 5; j++) {
+                    if(j >= buttons.size()) break;
+                    row.add(buttons.get(j));
+                }
+                rows.add(ActionRow.of(row));
+            }
+            msg.editMessageEmbeds(getEmbed()).setComponents(rows).queue();
         } else if(getType() == Type.SELECT_MULTIPLE || getType() == Type.SELECT_SINGLE) {
             StringSelectMenu.Builder select = StringSelectMenu.create("sr_select");
             select.setMaxValues(getType() == Type.SELECT_MULTIPLE ? getButtons().size() : 1);
-            getButtons().forEach(select::addOption);
+            getButtons().forEach((label, pair) -> select.addOption(label, pair.getLeft())); // no style needed
             msg.editMessageEmbeds(getEmbed()).setActionRow(
                     select.build()
             ).queue();
@@ -106,7 +115,7 @@ public abstract class ReactionMessage {
 
         private MessageEmbed embed;
 
-        private HashMap<String, String> buttons;
+        private TreeMap<String, Pair<String, ButtonStyle>> buttons;
         private Type type = Type.MULTIPLE;
 
         public Builder setEmbed(MessageEmbed embed) {
@@ -138,14 +147,25 @@ public abstract class ReactionMessage {
          * The Options will be displayed as Buttons or in a Selection, based on the selected Type.
          * @param label The label of the Option
          * @param roleId The ID of the Role
+         * @param style The Style of the Button (only needed for Buttons)
+         * @return This Builder Instance
+         */
+        public Builder addOption(String label, String roleId, ButtonStyle style) {
+            if(buttons == null) {
+                buttons = new TreeMap<>();
+            }
+            buttons.put(label, Pair.of(roleId, style));
+            return this;
+        }
+
+        /**
+         * Adds an Option to the Message. Uses the PRIMARY Style for the Button.
+         * @param label The label of the Option
+         * @param roleId The ID of the Role
          * @return This Builder Instance
          */
         public Builder addOption(String label, String roleId) {
-            if(buttons == null) {
-                buttons = new HashMap<>();
-            }
-            buttons.put(label, roleId);
-            return this;
+            return addOption(label, roleId, ButtonStyle.PRIMARY);
         }
 
         /**
@@ -164,17 +184,25 @@ public abstract class ReactionMessage {
 
         /**
          * Adds an Option to the Message.
+         * The Options will be displayed as Buttons (with the selected style) or in a Selection, based on the selected Type.
+         * @param label The label of the Option
+         * @param role The Role
+         * @param style The Style of the Button (only needed for Buttons)
+         * @return This Builder Instance
+         */
+        public Builder addOption(String label, Role role, ButtonStyle style) {
+            return addOption(label, role.getId(), style);
+        }
+
+        /**
+         * Adds an Option to the Message.
          * The Options will be displayed as Buttons or in a Selection, based on the selected Type.
          * @param label The label of the Option
          * @param role The Role
          * @return This Builder Instance
          */
         public Builder addOption(String label, Role role) {
-            if(buttons == null) {
-                buttons = new HashMap<>();
-            }
-            buttons.put(label, role.getId());
-            return this;
+            return addOption(label, role.getId());
         }
 
         public Builder setType(Type type) {
@@ -215,7 +243,7 @@ public abstract class ReactionMessage {
                         }
 
                         @Override
-                        HashMap<String, String> getButtons() {
+                        TreeMap<String, Pair<String, ButtonStyle>> getButtons() {
                             return buttons;
                         }
 
@@ -247,7 +275,7 @@ public abstract class ReactionMessage {
                 }
 
                 @Override
-                HashMap<String, String> getButtons() {
+                TreeMap<String, Pair<String, ButtonStyle>> getButtons() {
                     return buttons;
                 }
 
@@ -256,6 +284,10 @@ public abstract class ReactionMessage {
                     return type;
                 }
             };
+        }
+
+        public TreeMap<String, Pair<String, ButtonStyle>> getButtons() {
+            return buttons;
         }
 
     }
