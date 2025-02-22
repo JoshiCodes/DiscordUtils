@@ -45,11 +45,12 @@ ModuleLoader.loadModules(JDABuilder, Module, @Nullable Module...)
 ```
 
 ### Configuration
+> [!Note]
+> 
+> There are far better implementations for Configuration Files. This implementation is old and only used for simple Configurations.
+> Personally, I would recommend using [boosted-yaml](https://github.com/dejvokep/boosted-yaml).
 One of the most important Features, are the Configurations. These do not require a Module and could be used Stand-alone.
 There are a few different sort of Configurations, which are all listed below:
-<br>
-**Note:** There are far better implementations for Configuration Files. This implementation is old and only used for simple Configurations.
-Personally, I would recommend using [boosted-yaml](https://github.com/dejvokep/boosted-yaml).
 ```
     - JsonConfig
     - YamlConfig
