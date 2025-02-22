@@ -6,6 +6,10 @@ Discord JDA Utilities
 
 Some simple Utils for JDA Bots
 
+> [!Note]
+> 
+> These Utilities are already somewhat outdated. They should still work, but I wont be upgrading them anytime soon.
+> Maybe I will soon create a better framework for basic stuff like commands and everything implemented here.
 
 ## Installation
 
